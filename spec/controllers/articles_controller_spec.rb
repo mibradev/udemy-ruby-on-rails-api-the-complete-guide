@@ -2,20 +2,16 @@ require 'rails_helper'
 
 RSpec.describe ArticlesController, type: :controller do
   describe "GET #index" do
-    it "returns http success" do
+    it "returns http ok" do
       get :index
-      expect(response).to have_http_status(:success)
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body["data"]).to eq([])
     end
 
     it "returns serialized json" do
-      article = FactoryBot.create(:article)
+      articles = FactoryBot.create_list(:article, 2)
       get :index
-      data = JSON.parse(response.body)["data"]
-      expect(data[0]["id"]).to eq(article.id.to_s)
-      expect(data[0]["type"]).to eq(article.class.name.downcase.pluralize)
-      expect(data[0]["attributes"]["title"]).to eq(article.title)
-      expect(data[0]["attributes"]["content"]).to eq(article.content)
-      expect(data[0]["attributes"]["slug"]).to eq(article.slug)
+      expect(articles).to match_jsonapi([:title, :content, :slug])
     end
   end
 end
