@@ -13,5 +13,13 @@ RSpec.describe ArticlesController, type: :controller do
       get :index
       expect(articles).to match_jsonapi([:title, :content, :slug])
     end
+
+    it "returns sorted articles" do
+      articles = FactoryBot.create_list(:article, 2)
+      get :index
+      data = response.parsed_body["data"]
+      expect(data.first["id"]).to eq(articles.last.id.to_s)
+      expect(data.last["id"]).to eq(articles.first.id.to_s)
+    end
   end
 end

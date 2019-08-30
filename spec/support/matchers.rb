@@ -13,6 +13,9 @@ RSpec::Matchers.define :match_jsonapi do |attributes|
     expect(data).to be_an(Array)
     expect(data.size).to eq(records.size)
 
+    data.sort_by! { |h| h["id"] }
+    records.sort_by! { |h| h["id"] }
+
     records.each_with_index do |record, i|
       resource = data[i]
 
