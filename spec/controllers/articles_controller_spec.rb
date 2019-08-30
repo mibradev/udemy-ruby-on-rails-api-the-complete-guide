@@ -21,5 +21,13 @@ RSpec.describe ArticlesController, type: :controller do
       expect(data.first["id"]).to eq(articles.last.id.to_s)
       expect(data.last["id"]).to eq(articles.first.id.to_s)
     end
+
+    it "returns paginated articles" do
+      articles = FactoryBot.create_list(:article, 3)
+      get :index, params: { page: 2, per_page: 1 }
+      data = response.parsed_body["data"]
+      expect(data.size).to eq(1)
+      expect(data.first["id"]).to eq(articles.second.id.to_s)
+    end
   end
 end
