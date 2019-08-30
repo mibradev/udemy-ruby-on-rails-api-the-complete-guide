@@ -1,7 +1,9 @@
 class ArticlesController < ApplicationController
+  include SerializerOptions
+
   def index
-    render json: ArticleSerializer.new(
-      Article.recent.page(params[:page]).per(params[:per_page])
-    )
+    articles = Article.recent.page(params[:page]).per(params[:per_page])
+    options = { links: serializer_links(articles) }
+    render json: ArticleSerializer.new(articles, options)
   end
 end
