@@ -6,4 +6,8 @@ class ArticlesController < ApplicationController
     options = { links: serializer_links(articles) }
     render json: ArticleSerializer.new(articles, options)
   end
+
+  def show
+    render json: ArticleSerializer.new(Article.find(params[:id]))
+  end
 end

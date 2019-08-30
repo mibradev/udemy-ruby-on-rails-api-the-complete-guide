@@ -9,6 +9,7 @@ RSpec::Matchers.define :match_jsonapi do |attributes|
     records = [records] unless records.respond_to?(:to_a)
 
     data = response.parsed_body["data"]
+    data = [data] if data.is_a?(Hash)
 
     expect(data).to be_an(Array)
     expect(data.size).to eq(records.size)

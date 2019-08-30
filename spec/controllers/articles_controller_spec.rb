@@ -36,4 +36,20 @@ RSpec.describe ArticlesController, type: :controller do
       expect(links["last"]).to eq(articles_path(page: 3, per_page: 1))
     end
   end
+
+  describe "GET #sho" do
+    let(:article) { FactoryBot.create :article }
+    subject { get :show, params: { id: article.id } }
+
+    it "returns http ok" do
+      subject
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "returns serialized json" do
+      subject
+      data = response.parsed_body["data"]
+      expect(article).to match_jsonapi([:title, :content, :slug])
+    end
+  end
 end
