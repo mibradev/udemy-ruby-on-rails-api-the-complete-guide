@@ -1,5 +1,5 @@
 class ArticlesController < ApplicationController
-  include SerializerOptions
+  include Serializeable
 
   def index
     articles = Article.recent.page(params[:page]).per(params[:per_page])

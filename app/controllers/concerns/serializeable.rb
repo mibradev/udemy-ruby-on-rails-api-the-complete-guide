@@ -1,4 +1,4 @@
-module SerializerOptions
+module Serializeable
   private
     def serializer_links(records)
       path = "#{controller_name}_path"
