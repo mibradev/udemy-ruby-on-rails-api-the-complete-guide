@@ -9,6 +9,20 @@ module Authorizable
   end
 
   private
+    def authorize!
+      raise AuthorizationError unless current_user
+    end
+
+    def current_user
+      @current_user = access_token&.user
+    end
+
+    def access_token
+      @access_token = AccessToken.find_by_token(
+        request.authorization&.gsub(/\ABearer\s/, "")
+      )
+    end
+
     def authorization_error
       render json: {
         errors: [

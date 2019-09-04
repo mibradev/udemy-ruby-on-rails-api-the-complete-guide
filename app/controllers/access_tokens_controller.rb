@@ -6,6 +6,7 @@ class AccessTokensController < ApplicationController
   end
 
   def destroy
-    raise AuthorizationError
+    authorize!
+    current_user.access_token.destroy
   end
 end

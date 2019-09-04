@@ -52,5 +52,21 @@ RSpec.describe AccessTokensController, type: :controller do
       before { request.headers["authorization"] = "invalidtoken" }
       it_behaves_like "forbidden requests"
     end
+
+    context "successful request" do
+      let(:user) { FactoryBot.create(:user) }
+      let(:access_token) { user.create_access_token }
+
+      before { request.headers["authorization"] = "Bearer #{access_token.token}" }
+
+      it "returns http no content" do
+        subject
+        expect(response).to have_http_status(:no_content)
+      end
+
+      it "removes user's access token" do
+        expect { subject }.to change{ AccessToken.count }.by(-1)
+      end
+    end
   end
 end
