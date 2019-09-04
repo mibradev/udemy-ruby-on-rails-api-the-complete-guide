@@ -12,4 +12,17 @@ module Serializeable
 
     "#{controller_name.classify}Serializer".constantize.new(records, options)
   end
+
+  def serialize_errors(record)
+    {
+      errors: record.errors.messages.map do |k, v|
+        v.map do |m|
+          {
+            source: { pointer: "/data/attributes/#{k}" },
+            detail: m
+          }
+        end
+      end.flatten
+    }
+  end
 end

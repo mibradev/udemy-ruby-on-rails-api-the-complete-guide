@@ -52,4 +52,75 @@ RSpec.describe ArticlesController, type: :controller do
       expect(article).to match_jsonapi([:title, :content, :slug])
     end
   end
+
+  describe "POST #create" do
+    subject { post :create }
+
+    context "no code" do
+      it_behaves_like "forbidden requests"
+    end
+
+    context "invalid code" do
+      before { request.headers["authorization"] = "invalidcode" }
+      it_behaves_like "forbidden requests"
+    end
+
+    context "authorized" do
+      let(:access_token) { FactoryBot.create(:access_token) }
+      subject { post :create, params: { data: { attributes: { title: "", content: "" } } } }
+
+      before do
+        request.headers["authorization"] = "Bearer #{access_token.token}"
+      end
+
+      context "invalid parameter" do
+        it "returns http unprocessable entity" do
+          subject
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+
+        it "returns serialized json" do
+          subject
+          expect(response.parsed_body["errors"]).to include(
+            {
+              "source" => { "pointer" => "/data/attributes/title" },
+              "detail" => "can't be blank"
+            },
+            {
+              "source" => { "pointer" => "/data/attributes/content" },
+              "detail" => "can't be blank"
+            },
+            {
+              "source" => { "pointer" => "/data/attributes/slug" },
+              "detail" => "can't be blank"
+            }
+          )
+        end
+      end
+
+      context "successful request" do
+        let(:valid_attributes) do
+          { "data" => { "attributes" => FactoryBot.attributes_for(:article).stringify_keys } }
+        end
+
+        subject do
+          post :create, params: valid_attributes
+        end
+
+        it "returns http created" do
+          subject
+          expect(response).to have_http_status(:created)
+        end
+
+        it "returns serialized json" do
+          subject
+          expect(response.parsed_body["data"]["attributes"]).to include(valid_attributes["data"]["attributes"])
+        end
+
+        it "creates article" do
+          expect { subject }.to change { Article.count }.by(1)
+        end
+      end
+    end
+  end
 end

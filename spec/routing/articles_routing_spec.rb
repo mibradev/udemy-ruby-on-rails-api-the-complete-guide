@@ -8,4 +8,8 @@ RSpec.describe ArticlesController, type: :routing do
   it "routes /articles/:id to articles show" do
     expect(get: "/articles/1").to route_to("articles#show", id: "1")
   end
+
+  it "routes /articles to articles create" do
+    expect(post: "/articles").to route_to("articles#create")
+  end
 end
