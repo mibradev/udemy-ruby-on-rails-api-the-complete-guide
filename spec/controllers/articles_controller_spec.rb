@@ -200,4 +200,52 @@ RSpec.describe ArticlesController, type: :controller do
       end
     end
   end
+
+  describe "DELETE #destroy" do
+    let(:user) { FactoryBot.create(:user) }
+    let(:article) { FactoryBot.create(:article, user: user) }
+    let(:access_token) { user.create_access_token }
+    subject { delete :destroy, params: { id: article.id } }
+
+    context "no code" do
+      it_behaves_like "forbidden requests"
+    end
+
+    context "invalid code" do
+      before { request.headers["authorization"] = "invalidcode" }
+      it_behaves_like "forbidden requests"
+    end
+
+    context "authorized" do
+      let(:access_token) { user.create_access_token }
+
+      before do
+        request.headers["authorization"] = "Bearer #{access_token.token}"
+      end
+
+      context "delete other user's article" do
+        let(:other_user) { FactoryBot.create(:user) }
+        let(:other_article) { FactoryBot.create(:article, user: other_user) }
+        subject { delete :destroy, params: { id: other_article.id } }
+        it_behaves_like "forbidden requests"
+      end
+
+      context "successful request" do
+        it "returns http no content" do
+          subject
+          expect(response).to have_http_status(:no_content)
+        end
+
+        it "returns empty json" do
+          subject
+          expect(response.body).to be_blank
+        end
+
+        it "destroys article" do
+          article
+          expect { subject }.to change { Article.count }.by(-1)
+        end
+      end
+    end
+  end
 end

@@ -23,11 +23,22 @@ class ArticlesController < ApplicationController
     article = current_user.articles.find_by_id(params[:id])
 
     if article.nil?
-      authorization_error unless article
+      authorization_error
     elsif article.update(article_params)
       render json: serialize(article)
     else
       render json: serialize_errors(article), status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    authorize!
+    article = current_user.articles.find_by_id(params[:id])
+
+    if article.nil?
+      authorization_error
+    else article.destroy
+      head :no_content
     end
   end
 
