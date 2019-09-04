@@ -125,7 +125,8 @@ RSpec.describe ArticlesController, type: :controller do
   end
 
   describe "PATCH #update" do
-    let(:article) { FactoryBot.create(:article) }
+    let(:user) { FactoryBot.create(:user) }
+    let(:article) { FactoryBot.create(:article, user: user) }
     subject { patch :update, params: { id: article.id } }
 
     context "no code" do
@@ -138,11 +139,18 @@ RSpec.describe ArticlesController, type: :controller do
     end
 
     context "authorized" do
-      let(:access_token) { FactoryBot.create(:access_token) }
+      let(:access_token) { user.create_access_token }
       subject { patch :update, params: { id: article.id, data: { attributes: { title: "", content: "" } } } }
 
       before do
         request.headers["authorization"] = "Bearer #{access_token.token}"
+      end
+
+      context "update other user's article" do
+        let(:other_user) { FactoryBot.create(:user) }
+        let(:other_article) { FactoryBot.create(:article, user: other_user) }
+        subject { patch :update, params: { id: other_article.id } }
+        it_behaves_like "forbidden requests"
       end
 
       context "invalid parameter" do

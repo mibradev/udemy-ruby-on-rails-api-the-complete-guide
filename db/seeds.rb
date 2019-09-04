@@ -6,8 +6,21 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-(1..3).each do |i|
-  Article.create!(
+users = []
+
+2.times do |i|
+  user = User.new
+  user.login = Faker::Internet.unique.username(separators: "")
+  user.name = Faker::Name.name
+  user.url = Faker::Internet.url(host: "github.com", path: "/#{user.login}")
+  user.avatar_url = Faker::Avatar.image
+  user.provider = "github"
+  user.save!
+  users << user
+end
+
+(1..100).each do |i|
+  users.sample.articles.create!(
     title: "Article title #{i}",
     content: "Article content #{i}",
     slug: "article-title-#{i}"

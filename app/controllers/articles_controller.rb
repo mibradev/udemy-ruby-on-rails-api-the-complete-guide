@@ -9,7 +9,7 @@ class ArticlesController < ApplicationController
 
   def create
     authorize!
-    article = Article.new(article_params)
+    article = current_user.articles.build(article_params)
 
     if article.save
       render json: serialize(article), status: :created
@@ -20,9 +20,11 @@ class ArticlesController < ApplicationController
 
   def update
     authorize!
-    article = Article.find(params[:id])
+    article = current_user.articles.find_by_id(params[:id])
 
-    if article.update(article_params)
+    if article.nil?
+      authorization_error unless article
+    elsif article.update(article_params)
       render json: serialize(article)
     else
       render json: serialize_errors(article), status: :unprocessable_entity
