@@ -2,23 +2,6 @@ require 'rails_helper'
 
 RSpec.describe AccessTokensController, type: :controller do
   describe "POST #create" do
-    shared_examples_for "unauthorized requests" do
-      it "returns http unauthorized" do
-        subject
-        expect(response).to have_http_status(:unauthorized)
-      end
-
-      it "returns error" do
-        subject
-        expect(response.parsed_body["errors"]).to include({
-          "status" => "401",
-          "source" => { "pointer" => "/code" },
-          "title" =>  "Authentication code is invalid",
-          "detail" => "You must provide valid code in order to exchange it for token."
-        })
-      end
-    end
-
     context "no code" do
       subject { post :create }
       it_behaves_like "unauthorized requests"
@@ -59,23 +42,15 @@ RSpec.describe AccessTokensController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-    context "invalid request" do
-      subject { delete :destroy }
+    subject { delete :destroy }
 
-      it "returns http forbidden" do
-        subject
-        expect(response).to have_http_status(:forbidden)
-      end
+    context "no authorization header" do
+      it_behaves_like "forbidden requests"
+    end
 
-      it "returns http forbidden" do
-        subject
-        expect(response.parsed_body["errors"]).to include({
-          "status" => "403",
-          "source" => { "pointer" => "/headers/authorization" },
-          "title" =>  "Not authorized",
-          "detail" => "You have no right to access this resource."
-        })
-      end
+    context "invalid authorization header" do
+      before { request.headers["authorization"] = "invalidtoken" }
+      it_behaves_like "forbidden requests"
     end
   end
 end
