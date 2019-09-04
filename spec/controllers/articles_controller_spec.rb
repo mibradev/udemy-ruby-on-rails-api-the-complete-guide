@@ -37,7 +37,7 @@ RSpec.describe ArticlesController, type: :controller do
     end
   end
 
-  describe "GET #sho" do
+  describe "GET #show" do
     let(:article) { FactoryBot.create :article }
     subject { get :show, params: { id: article.id } }
 
