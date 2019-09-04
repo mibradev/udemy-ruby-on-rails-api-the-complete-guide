@@ -57,4 +57,25 @@ RSpec.describe AccessTokensController, type: :controller do
       end
     end
   end
+
+  describe "DELETE #destroy" do
+    context "invalid request" do
+      subject { delete :destroy }
+
+      it "returns http forbidden" do
+        subject
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it "returns http forbidden" do
+        subject
+        expect(response.parsed_body["errors"]).to include({
+          "status" => "403",
+          "source" => { "pointer" => "/headers/authorization" },
+          "title" =>  "Not authorized",
+          "detail" => "You have no right to access this resource."
+        })
+      end
+    end
+  end
 end
