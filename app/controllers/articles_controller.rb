@@ -18,6 +18,17 @@ class ArticlesController < ApplicationController
     end
   end
 
+  def update
+    authorize!
+    article = Article.find(params[:id])
+
+    if article.update(article_params)
+      render json: serialize(article)
+    else
+      render json: serialize_errors(article), status: :unprocessable_entity
+    end
+  end
+
   private
     def article_params
       params.require(:data).require(:attributes).permit(:title, :content, :slug)

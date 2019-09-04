@@ -123,4 +123,73 @@ RSpec.describe ArticlesController, type: :controller do
       end
     end
   end
+
+  describe "PATCH #update" do
+    let(:article) { FactoryBot.create(:article) }
+    subject { patch :update, params: { id: article.id } }
+
+    context "no code" do
+      it_behaves_like "forbidden requests"
+    end
+
+    context "invalid code" do
+      before { request.headers["authorization"] = "invalidcode" }
+      it_behaves_like "forbidden requests"
+    end
+
+    context "authorized" do
+      let(:access_token) { FactoryBot.create(:access_token) }
+      subject { patch :update, params: { id: article.id, data: { attributes: { title: "", content: "" } } } }
+
+      before do
+        request.headers["authorization"] = "Bearer #{access_token.token}"
+      end
+
+      context "invalid parameter" do
+        it "returns http unprocessable entity" do
+          subject
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+
+        it "returns serialized json" do
+          subject
+          expect(response.parsed_body["errors"]).to include(
+            {
+              "source" => { "pointer" => "/data/attributes/title" },
+              "detail" => "can't be blank"
+            },
+            {
+              "source" => { "pointer" => "/data/attributes/content" },
+              "detail" => "can't be blank"
+            }
+          )
+        end
+      end
+
+      context "successful request" do
+        let(:valid_attributes) do
+          { id: article.id, "data" => { "attributes" => FactoryBot.attributes_for(:article).stringify_keys } }
+        end
+
+        subject do
+          patch :update, params: valid_attributes
+        end
+
+        it "returns http created" do
+          subject
+          expect(response).to have_http_status(:ok)
+        end
+
+        it "returns serialized json" do
+          subject
+          expect(response.parsed_body["data"]["attributes"]).to include(valid_attributes["data"]["attributes"])
+        end
+
+        it "updates article" do
+          subject
+          expect(article.reload.title).to eq(valid_attributes["data"]["attributes"]["title"])
+        end
+      end
+    end
+  end
 end

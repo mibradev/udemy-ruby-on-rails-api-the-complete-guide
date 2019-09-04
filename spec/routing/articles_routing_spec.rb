@@ -12,4 +12,9 @@ RSpec.describe ArticlesController, type: :routing do
   it "routes /articles to articles create" do
     expect(post: "/articles").to route_to("articles#create")
   end
+
+  it "routes /articles/:id to articles update" do
+    expect(patch: "/articles/1").to route_to("articles#update", id: "1")
+    expect(put: "/articles/1").to route_to("articles#update", id: "1")
+  end
 end
