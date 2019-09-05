@@ -1,24 +1,3 @@
-# README
+## Rails REST API
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+A Ruby on Rails app based on [Ruby on Rails REST API: The Complete Guide Course](https://www.udemy.com/course/ruby-on-rails-api-the-complete-guide/) with various changes and updated packages including Rails 6.
