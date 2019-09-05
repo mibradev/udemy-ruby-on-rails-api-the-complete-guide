@@ -20,9 +20,11 @@ users = []
 end
 
 (1..100).each do |i|
-  users.sample.articles.create!(
+  user = users.sample
+  article = user.articles.create!(
     title: "Article title #{i}",
     content: "Article content #{i}",
     slug: "article-title-#{i}"
   )
+  3.times { article.comments.create!(content: Faker::Lorem.sentence, user: user) if i.even? }
 end

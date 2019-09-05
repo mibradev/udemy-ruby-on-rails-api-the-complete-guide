@@ -1,14 +1,16 @@
 module Serializeable
   def serialize(records, **options)
-    path = "#{controller_name}_path"
+    Rails.application.routes.router.recognize(request) do |route, matches, parameters|
+      path = "#{route.name}_path"
 
-    options[:links] ||= {
-      self: send(path, page: records.current_page, per_page: params[:per_page]),
-      first: send(path, per_page: params[:per_page]),
-      next: !records.next_page ? nil : send(path, page: records.next_page, per_page: params[:per_page]),
-      previous: !records.prev_page ? nil : send(path, page: records.prev_page, per_page: params[:per_page]),
-      last: send(path, page: records.total_pages, per_page: params[:per_page])
-    } if records.respond_to?(:per)
+      options[:links] ||= {
+        self: send(path, page: records.current_page, per_page: params[:per_page]),
+        first: send(path, per_page: params[:per_page]),
+        next: !records.next_page ? nil : send(path, page: records.next_page, per_page: params[:per_page]),
+        previous: !records.prev_page ? nil : send(path, page: records.prev_page, per_page: params[:per_page]),
+        last: send(path, page: records.total_pages, per_page: params[:per_page])
+      } if records.respond_to?(:per)
+    end
 
     "#{controller_name.classify}Serializer".constantize.new(records, options)
   end
