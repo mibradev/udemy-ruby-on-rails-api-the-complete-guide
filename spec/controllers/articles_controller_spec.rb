@@ -57,12 +57,12 @@ RSpec.describe ArticlesController, type: :controller do
     subject { post :create }
 
     context "no code" do
-      it_behaves_like "forbidden requests"
+      it_behaves_like "forbidden request"
     end
 
     context "invalid code" do
       before { request.headers["authorization"] = "invalidcode" }
-      it_behaves_like "forbidden requests"
+      it_behaves_like "forbidden request"
     end
 
     context "authorized" do
@@ -130,12 +130,12 @@ RSpec.describe ArticlesController, type: :controller do
     subject { patch :update, params: { id: article.id } }
 
     context "no code" do
-      it_behaves_like "forbidden requests"
+      it_behaves_like "forbidden request"
     end
 
     context "invalid code" do
       before { request.headers["authorization"] = "invalidcode" }
-      it_behaves_like "forbidden requests"
+      it_behaves_like "forbidden request"
     end
 
     context "authorized" do
@@ -150,7 +150,7 @@ RSpec.describe ArticlesController, type: :controller do
         let(:other_user) { FactoryBot.create(:user) }
         let(:other_article) { FactoryBot.create(:article, user: other_user) }
         subject { patch :update, params: { id: other_article.id } }
-        it_behaves_like "forbidden requests"
+        it_behaves_like "forbidden request"
       end
 
       context "invalid parameter" do
@@ -208,12 +208,12 @@ RSpec.describe ArticlesController, type: :controller do
     subject { delete :destroy, params: { id: article.id } }
 
     context "no code" do
-      it_behaves_like "forbidden requests"
+      it_behaves_like "forbidden request"
     end
 
     context "invalid code" do
       before { request.headers["authorization"] = "invalidcode" }
-      it_behaves_like "forbidden requests"
+      it_behaves_like "forbidden request"
     end
 
     context "authorized" do
@@ -227,7 +227,7 @@ RSpec.describe ArticlesController, type: :controller do
         let(:other_user) { FactoryBot.create(:user) }
         let(:other_article) { FactoryBot.create(:article, user: other_user) }
         subject { delete :destroy, params: { id: other_article.id } }
-        it_behaves_like "forbidden requests"
+        it_behaves_like "forbidden request"
       end
 
       context "successful request" do

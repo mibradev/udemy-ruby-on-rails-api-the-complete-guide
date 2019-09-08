@@ -1,6 +1,23 @@
 require 'rails_helper'
 
-shared_examples_for "unauthorized requests" do
+shared_examples_for "unauthorized standard request" do
+  it "returns http unauthorized" do
+    subject
+    expect(response).to have_http_status(:unauthorized)
+  end
+
+  it "returns error" do
+    subject
+    expect(response.parsed_body["errors"]).to include({
+      "status" => "401",
+      "source" => { "pointer" => "/data/attributes/password" },
+      "title" =>  "Invalid login or password",
+      "detail" => "You must provide valid credentials in order to exchange them for token."
+    })
+  end
+end
+
+shared_examples_for "unauthorized oauth request" do
   it "returns http unauthorized" do
     subject
     expect(response).to have_http_status(:unauthorized)
@@ -17,7 +34,7 @@ shared_examples_for "unauthorized requests" do
   end
 end
 
-shared_examples_for "forbidden requests" do
+shared_examples_for "forbidden request" do
   it "returns http forbidden" do
     subject
     expect(response).to have_http_status(:forbidden)

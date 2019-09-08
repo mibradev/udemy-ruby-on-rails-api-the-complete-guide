@@ -49,7 +49,7 @@ RSpec.describe CommentsController, type: :controller do
   describe "POST #create" do
     context "without authorization" do
       subject { post :create, params: { article_id: article.id } }
-      it_behaves_like "forbidden requests"
+      it_behaves_like "forbidden request"
     end
 
     context "with authorization" do
