@@ -48,7 +48,6 @@ RSpec.describe ArticlesController, type: :controller do
 
     it "returns serialized json" do
       subject
-      data = response.parsed_body["data"]
       expect(article).to match_jsonapi([:title, :content, :slug])
     end
   end
