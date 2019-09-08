@@ -24,5 +24,11 @@ RSpec.describe User, type: :model do
       expect(user).not_to be_valid
       expect(user.errors.messages[:provider]).to include("can't be blank")
     end
+
+    it "requires password if the provider is standard" do
+      user = FactoryBot.build(:user, provider: "standard", password: nil)
+      expect(user).not_to be_valid
+      expect(user.errors.messages[:password]).to include("can't be blank")
+    end
   end
 end

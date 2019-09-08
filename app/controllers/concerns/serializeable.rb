@@ -12,7 +12,8 @@ module Serializeable
       } if records.respond_to?(:per)
     end
 
-    "#{controller_name.classify}Serializer".constantize.new(records, options)
+    serializer = options[:serializer] || controller_name
+    "#{serializer.to_s.classify}Serializer".constantize.new(records, options)
   end
 
   def serialize_errors(record)
